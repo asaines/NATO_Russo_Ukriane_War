@@ -1,30 +1,259 @@
 ---
-title: "NATO"
-author: "Alexander Saines"
-date: "10/4/2022"
+title: "Geo-Spatial sentiment analysis using Tweets related to the North Atlantic Treaty Organization (NATO)"
+knit: (function(input_file, encoding) {
+    out_dir <- 'docs';
+    rmarkdown::render(input_file,
+      encoding=encoding,
+      output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# 1. Research Design
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+On 24 February 2022, Russia invaded Donbas, Ukraine, in a major escalation of the Russo-Ukrainian armed conflict that began in 2014. According to the Russian president, Vladimir Putin, the invasion is a result of the negotiations of Ukraine to join the North Atlantic Treaty Organization (NATO) in the foreseeable future. Since 1997, 14 countries between Western Europe and Russia have joined NATO, threatening Russian geopolitical power in the region [1]. The armed conflict between these two countries has propelled an intense debate about military alliances, political balances, and international peace treaties. Finland and Sweden, two Nordic estates that until recently had remained militarily non-aligned, are now expected to apply to join NATO as well. According to the Washington Post, a majority of Finnish citizens, whose country shares a border with Russia, would feel safer within NATO [2].
 
-```{r cars}
-summary(cars)
+The aim of this research notebook is to conduct a geospatial Sentiment Analysis (SA) about how European countries perceive NATO on Twitter. Given the recent interest of Finland to become a member of NATO as they share a border with Russia, we are interested to know if distance from Russia determines sentiment towards NATO. Our hypothesis is that the closer a country is to Russia, the more supportive of NATO it is. 
+
+We think our research will contribute to a growing body of literature in which geo-spatial SA is used to unveil public opinion on social media about political events based on the location where texts are produced. Agarwal et al. (2017) unveil the perception of the Brexit referendum around the globe [3]. According to their findings, Americans were the ones tweeting more positively about UK leaving the European Union, while India was the country with more tweets about the event. Cali et. al (2020) explore the 2015 HIV outbreak in Indiana [4]. The authors conclude that tweets can be used to predict outbreaks in specific communities due to variations of conversations on Twitter about behavioural self-reported risk factors. Moreira de Oliveira and Painho (2021) delve into the possibility to use sentiment analysis on tweets posted in smart cities to identify venues, neighborhoods, and public infrastructure that might benefit from a change in urban planning or city management [5]. These papers show how SA can be a useful tool to draw conclusions from social media on public events, combining location and emotions to help decision-makers to enhance public policy and budget allocation. 
+
+
+# 2. Methodology 
+
+The roadmap to answer our research question is:
+
+**Data collection:**
+
+We used the free Twitter API to harvest tweets in English from 27 European countries. Collected tweets included the word “NATO”. Working with the free Twitter API presented serious problems regarding the location and the maximum number of tweets we could scrape. To face these challenges, we limited the number of tweets by country to 1,000 and used the coordinates of each country’s capital to collect tweets within a radius of 50 miles. 
+In total, we collected 4,920 tweets. Tweets were collected on June 15th, 2020. 
+
+
+**Measurement:**
+
+We applied the following techniques: 
+
+*	Sentiment metrics by VADER. This lexicon produces four sentiment metrics: positive, neutral, negative, and compound. The first three account for the proportion of the text that falls into these categories. The latter metric represents the sum of all the lexicon ratings, standardized to range between -1 (most extreme negative) and +1 (most extreme positive).
+
+*	Distance between Russian and European countries: The Haversine formula is used to calculate the shortest distance between two points on a sphere (or the surface of Earth).
+
+*	Map visualization to check closeness to Russia was made using the ggplot2 library.
+
+# 3. Analysis
+
+*Step 1:* We collect  4870 tweets from 28 European countries by using a Twitter API, along with coordinates of European countries' capital by using the data-set "world-cities" [6]. They were collected on June 15, 2022. The collection of tweets was done in parts due to reaching the downloading rate allowed.
+
+```{r}
+#Team members: Ramiro Antonio Maravilla Flores, r0865442 Alexander Saines Fajardo, r0731904
+library(quanteda)
+library(quanteda.textplots)
+library(cowplot)
+library(vader)
+library(readxl)
+library(tidyverse)
+#install.packages("grid", 'REdaS')
+library(REdaS)
+#geolocalization of cities from xxxx
+setwd("D:/OneDrive - KU Leuven/COLLECTING BIG DATA SOCIAL SCIENCE/Project/as2/")
+coordenates=read_excel("worldcities.xlsx", sheet = "coordenates")
+coordenates$lat <- trimws(coordenates$lat, which = c("both"))
+coordenates$lng <- trimws(coordenates$lng, which = c("both"))
+head(coordenates,n = 2)
+# collecting tweets by means of twitter api
+#n=1000
+#miles="50mi"
+#search="nato"
+#natotw <- data.frame()
+#language="en"
+#for (capital in coordenates$city_ascii){
+#  city=coordenates %>% filter(city==capital) %>% select(country,lat, lng) 
+#  coord=paste(city$lat,",", city$lng, ",",miles)
+#  coord=gsub(" ","",coord, fixed=TRUE)
+#  tweets=search_tweets(q="nato",n, type="recent",geocode=coord, lang="en", include_rts = TRUE)
+#  tweets$recol_id=city$country
+#  natotw<- rbind(natotw,tweets) }
+
+
+#saveRDS(natotw,file="C:/Users/rmara/OneDrive/Escritorio/Collecting Data")
+#open tweets
+natotw <- data.frame()
+for (num in c(9,10,11,12)){
+  natotw=rbind(natotw,readRDS(gsub(" ", "", paste("natotw_",num, ".rds"), fixed=TRUE)))}
+
+head(natotw %>%select(text,recol_id))
+
+```
+*Step 2:* The tweets were cleaned using the following code. It is worth mentioning that Twitter user identifications were removed to protect their privacy. Besides, Countries having higher than 30 tweets were selected since it is the minimum amount of records to keep considering the Central Limit Theorem:
+
+```{r}
+# remove overlap between countries duplication 
+natotw=natotw %>% select(user_id, text, recol_id) %>% distinct(user_id, text, .keep_all = TRUE)
+#clean tweets - reference: https://rstudio-pubs-static.s3.amazonaws.com/286190_fbd48f12527e41ecaf45437beec599df.html
+natotw$plain2 = iconv(natotw$text, to = "ASCII", sub = " ")  # Convert to basic ASCII text to avoid silly characters
+natotw$plain2 <- tolower(natotw$plain2)  # Make everything consistently lower case
+natotw$plain2 <- gsub("@\\w+", " ", natotw$plain2)  # Remove user names
+natotw$plain2 <- gsub("http.+ |http.+$", " ", natotw$plain2)  # Remove links
+natotw$plain2 <- gsub("[[:punct:]]", " ", natotw$plain2)  # Remove punctuation
+natotw$plain2 <- gsub("[ |\t]{2,}", " ", natotw$plain2)  # Remove tabs
+natotw$plain2 <- gsub("amp", " ", natotw$plain2)  # "&" is "&amp" in HTML, so after punctuation removed ...
+natotw$plain2 <- gsub("^ ", "", natotw$plain2)  # Leading blanks
+natotw$plain2 <- gsub(" $", "", natotw$plain2)  # Lagging blanks
+natotw$plain2 <- gsub(" +", " ", natotw$plain2) # General spaces (should just do all white spaces no?)
+natotw=natotw %>% distinct(text, .keep_all = TRUE) # remove duplicates
+head(natotw %>% select(text,plain2))
+
+#total tweets per country
+tot_tw_country=natotw %>% group_by(recol_id) %>% summarise(total=n()) %>% arrange(-total)
+head(tot_tw_country, 5)
+# contries having lower than 30 tweets are deleted - Slowakia, Iceland, Cyprus
+natotw=natotw %>% filter(!recol_id %in% c("belarus","Slovakia", "Iceland", "Cyprus"))
+
+```
+*Step 3:* The compound, positive, negative, and neutral sentiment scores were computed per each tweet. The median is computed since the histograms (see in the statistical section) depict skew distributions.
+```{r}
+#compute sentiment analysis using vader
+sentiment=cbind(natotw,vader_df(natotw$plain2)[3:6])
+
+sentiment=sentiment %>% filter(!is.na(sentiment$compound)) #1 tweet with error deleted
+```
+```{r}
+#compute average compound
+average_sentiment=sentiment %>% group_by(recol_id) %>% summarize(med_compound= median(compound), med_pos= median(pos), med_neg=median(neg), med_neu=median(neu))
+```
+*Step 4:* The distance between the European countries and Russia is computed by using the Haversine formula, which is the shortest distance between two points on a sphere (or the surface of Earth).
+``` {r}
+distance=function(lat1, lat2, lon1, lon2){
+lon1 = deg2rad(lon1)
+lon2 = deg2rad(lon2)
+lat1 = deg2rad(lat1)
+lat2 = deg2rad(lat2)
+# Haversine formula
+dlon = lon2 - lon1
+dlat = lat2 - lat1
+a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+c = 2 * asin(sqrt(a))
+# Radius of earth in kilometers. Use 3956 for miles
+r = 6371
+# calculate the result
+return(c * r) }
+# driver code
+lat_Moscow = 55.7522200
+lon_Moscow = 37.6155600
+coordenates$lat=as.numeric(coordenates$lat) 
+coordenates$lng=as.numeric(coordenates$lng) 
+# compute distance in the df
+coordenates$distance <- round(mapply(distance,lat_Moscow, coordenates$lat, lon_Moscow, coordenates$lng),0)
+#to merge pos, neg, neu to coordinate df
+polarity_country=coordenates %>% merge(average_sentiment,by.x = "country", by.y =  "recol_id")
+```
+# 4. Results
+
+To begin with, we plot a word cloud to identify the words that are related the most to NATO. We remove words like (“nato”, “#nato”, “@nato”, “amp”). The most relevant words are *Ukraine, Finland, war, support, military, security*, and *join.*
+
+```{r}
+mystopwords = stopwords("english", 
+                        source="snowball")
+mystopwords = c("nato", "#nato", "@nato","amp", mystopwords)
+
+d = corpus(natotw$text) %>% 
+  tokens(remove_punct=T) %>% 
+  dfm() %>%
+  dfm_remove(mystopwords)
+textplot_wordcloud(d, max_words=180, adjust = 0)
 ```
 
-## Including Plots
+Moreover, In order to answer whether the distance between European countries and Russia plays a role in the sentiments towards NATO, we build histograms of the polarity compound score by country. The histograms show high dispersion and skew curves, which means that there is a high heterogeneity when it comes to the sentiments towards NATO among countries. 
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+#histogram per country
+ggplot(sentiment,aes(x=compound)) +geom_histogram() + facet_wrap(~recol_id)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Furthermore, we computed the median of the compound score to check the relationship between the sentiment’s polarity and distance. We found no evident relationship between these two. However, we find a negative relationship between the median of positive sentiment score (tweets with positive sentiments towards NATO) and distance. This means that the closer a country is to Russia, the more it tweets positively about NATO, which confirms our hypothesis. 
+
+
+```{r}
+#scatter plots
+a=ggplot(polarity_country, aes(x=distance, y=med_compound)) + geom_point() +ylab("Compound Score")
+b=ggplot(polarity_country, aes(x=distance, y=med_neu)) + geom_point() +ylab("(%) Neutral Score")
+c=ggplot(polarity_country, aes(x=distance, y=med_pos)) + geom_point() +ylab("(%) Positive Score")
+d=ggplot(polarity_country, aes(x=distance, y=med_neg)) + geom_point() +ylab("(%) Negative Score")
+plot_grid(a, b,c,d, ncol = 2, nrow = 2)
+```
+We calculated the Pearson Correlation coefficient to check to what extent distance is related to sentiment metrics. The distance between Portugal and Russia was excluded (distance = 3,907) since it stands out as an outlier. The varaibles were standardized to compere in the same scale.
+
+
+```{r}
+z_pol<-scale(polarity_country %>%filter(distance<3600) %>%  select(distance, med_compound, med_pos, med_neg, med_neu) ,center=TRUE,scale=TRUE)
+round(cor(z_pol),2)
+
+```
+
+According to Cohen’s (1988) [7], a correlation larger than 50% is considered to have a large effect size. Therefore, *the median of positive emotion* and *distance* seems to have a negative medium-size effect. This means that as the distance between a country and Russia decreases, the higher positive words related to NATO are found. 
+
+Finally, a map of Europe is shown to provide a general idea about *the median of positive sentiments* in the European region.
+
+
+```{r}
+polarity=polarity_country %>% select(country,med_compound, med_pos, med_neg, med_neu)
+polarity=rbind(polarity, data.frame(country="Russia", med_compound=0, med_pos=0, med_neg=0, med_neu=0))
+mapdata= map_data("world")
+mapdata=left_join(mapdata,polarity, by=c("region"= "country"))
+mapdata2=mapdata %>% filter(!is.na(mapdata$med_compound))
+mapdata2$med_compound[mapdata2$region=="Russia"]=NA
+mapdata2$med_pos[mapdata2$region=="Russia"]=NA
+mapdata2$med_neg[mapdata2$region=="Russia"]=NA
+mapdata2$med_neu[mapdata2$region=="Russia"]=NA
+# add country names
+countries=mapdata2 %>% group_by(region) %>% summarise(long=mean(long), lat=mean(lat))
+
+#compound
+ggplot(mapdata2, aes(long, lat)) +  geom_polygon(aes(group=group ,fill=med_pos), colour='black') +
+  scale_fill_gradient(name= "(%) Positive words ", low='red', high='green', na.value="grey50")+
+  geom_text(data=countries, aes(long, lat, label = region), size=2)
+
+```
+
+# 5. Conclusion
+
+According to the evidence provided by the scatter plot graph, the correlation matrix, and the Europe heat map, we found a negative relationship between distance and the proportion of positive words on tweets containing the word NATO. We can confirm our hypothesis and confirm that the closer a European country is to Russia, the more it tweets positively of NATO. 
+
+
+# 6. Discussion
+
+The API to collect tweets offered by Twitter has some important constraints that should be taken into account when generalizing our results:
+•	Time period of data collection. The free Twitter API allows tweets collection up to only 7 days backwards, which makes it impossible to compare the perception of NATO before the Russian invasion of Ukraine. We believe that a time series analysis of tweets would show so much clearer how the perception of NATO varies in the region throughout time.
+
+•	Tweet’s geo-locations. Geo-location of tweets was done by using coordinates of each country’s capital and a generic radius distance. This was a problem initially since some radius distances overlapped between capitals, which duplicated collected tweets. Eventually, the distance was reduced to 50 miles, resulting in fewer collected tweets -we could not find information on the web having the radius of each city according to the centric coordinates. Therefore, we must admit that our approach might not be representative of the whole country, but only of Twitter users living near capitals. It is worth mentioning that Twitter API offer a premium service to download tweets by country -although this feature is not free, and we could not access it. If we had access to more precise coordinates, we could have labelled places according to their socioeconomic status. Then, we ould measure sentiments according to economic status as well.
+
+
+•	Retweets. Retweets could be an enriching source of information since many users do not write their own thoughts and prefer retweeting posts they agree with. However, we excluded RT from our analysis due to the possibility that a popular tweet with plenty of retweets could significantly affect the randomness of the sample. Further research could examine closely tweets with a large number of RT to understand the main topics discussed on them. 
+
+•	Language. Finally, written-English tweets were only selected. This let aside tweets written in other languages. People who post in English living in non-English speaker countries had access to education and generally belong to the middle and upper classes, thus, we admit our analysis might have a socio-economic bias. In further research we would like to run a comparative approach to SA, contrasting tweets in Russian, English, French and Spanish to understand the opinion nuances towards NATO. 
+
+# 7. Elevator pitch
+
+Post-cold war alliances are falling apart as Europe experiences its very first war of this century. As a result, militarily non-aligned countries are weighing the possibility to join or reinforce military alliances to protect themselves from external attacks. We applied sentiment analysis to tweets in English from 27 European countries to determine what is the perception of NATO given the current political situation. We found that the closer a country is to Russia, the more it tweets positively about NATO. This shows that European countries close to Russia consider NATO as an effective measure to stop Russian expansionist activities. 
+
+# References
+[1] https://theconversation.com/3-nato-gambles-that-have-played-a-big-role-in-the-horrors-of-war-in-ukraine-178815
+
+[2] https://www.washingtonpost.com/world/2022/04/30/finland-join-nato/
+
+[3] Agarwal, A., Singh, R., & Toshniwal, D. (2018). Geospatial sentiment analysis using twitter data for UK-EU referendum. Journal of Information and Optimization Sciences, 39(1), 303-317.
+
+[4] Cai, M., Shah, N., Li, J., Chen, W. H., Cuomo, R. E., Obradovich, N., & Mackey, T. K. (2020). Identification and characterization of tweets related to the 2015 Indiana HIV outbreak: A retrospective infoveillance study. PloS one, 15(8), e0235150.
+
+[5] Oliveira, T. H., & Painho, M. (2021). Open geospatial data contribution towards sentiment analysis within the human dimension of smart cities. In Open Source Geospatial Science for Urban Studies (pp. 75-95). Springer, Cham. 
+
+[6] https://simplemaps.com/data/world-cities
+
+[7] Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences. New York, NY: Routledge Academic.
