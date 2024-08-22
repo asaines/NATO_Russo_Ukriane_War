@@ -19,9 +19,25 @@ The project aims to explore the dynamics of the conflict through data-driven ins
 
 To replicate the analysis, follow these steps:
 
-1. Clone the repository.
-2. Install the necessary R packages (listed in the `DESCRIPTION` or `renv.lock` files).
-3. Run the R markdown file to generate the analysis.
+1. **Clone the Repository**: Clone this repository to your local machine.
+   
+   ```bash
+   git clone https://github.com/asaines/NATO_Russo_Ukriane_War.git
+
+2. **Install Required R Packages**: Install the necessary R packages. You can do this by opening R and running:
+
+    ```bash
+    install.packages(c("tidyverse", "ggplot2", "leaflet", "dplyr", "corrr", "rmarkdown"))
+
+Alternatively, if a DESCRIPTION or renv.lock file is provided, use it to install the exact package versions used.
+
+3. **Render the R Markdown File**: Open the NATO_Russo_Ukriane_War.Rmd file in RStudio or another R environment and render it to produce the analysis.
+
+    ```bash
+    rmarkdown::render("NATO_Russo_Ukriane_War.Rmd")
+
+4. **View the Analysis**: Once rendered, open the generated HTML file in a web browser to view the analysis.
+
 
 ## Results
 
