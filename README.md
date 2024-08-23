@@ -62,7 +62,7 @@ This map illustrates the percentage of positive words about NATO in tweets acros
 ### Positive Score vs. Distance
 
 <div align="center">
-    <img src="https://github.com/user-attachments/assets/d2d5898d-9d76-4b9f-b93a-0b12538a2181" alt="Positive Score vs. Distance">
+    <img src="[https://github.com/user-attachments/assets/d2d5898d-9d76-4b9f-b93a-0b12538a2181](https://github.com/user-attachments/assets/a46b3b7e-30ec-49dd-a660-a41f893a6df6)" alt="Positive Score vs. Distance">
 </div>
 
 The scatter plot displays the relationship between the distance from Russia and the positive sentiment score. It suggests that proximity to Russia may positively influence NATO's perception.
