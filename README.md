@@ -41,6 +41,29 @@ Alternatively, if a DESCRIPTION or renv.lock file is provided, use it to install
 
 
 ## Results
+The analysis confirmed a significant finding: there is a negative relationship between the distance from Russia and the proportion of positive tweets about NATO. Specifically, the closer a European country is to Russia, the more positively it tweets about NATO. This conclusion was supported by the scatter plot, correlation matrix, and Europe heat map, validating the hypothesis that proximity to Russia influences public sentiment toward NATO.
+
+### Word Cloud
+
+![image](https://github.com/user-attachments/assets/9c56b6b3-4c87-4d08-bc0e-d668957860b3)
+
+
+The word cloud shows the most frequently mentioned terms in tweets related to the Russo-Ukrainian war and NATO, highlighting key topics of discussion.
+
+### Geographical Sentiment Map
+
+![image](https://github.com/user-attachments/assets/37cbffbc-2d71-4cb6-9d3a-6e8222ed35c1)
+
+
+This map illustrates the percentage of positive words about NATO in tweets across different European countries. The results indicate that countries closer to Russia have a higher rate of positive sentiment towards NATO.
+
+### Positive Score vs. Distance
+
+![image](https://github.com/user-attachments/assets/d2d5898d-9d76-4b9f-b93a-0b12538a2181)
+
+
+The scatter plot displays the relationship between the distance from Russia and the positive sentiment score. It suggests that proximity to Russia may positively influence NATO's perception.
+
 
 The analysis confirmed a significant finding: there is a negative relationship between the distance from Russia and the proportion of positive tweets about NATO. Specifically, the closer a European country is to Russia, the more positively it tweets about NATO. This conclusion was supported by the scatter plot, correlation matrix, and Europe heat map, validating the hypothesis that proximity to Russia influences public sentiment toward NATO.
 
