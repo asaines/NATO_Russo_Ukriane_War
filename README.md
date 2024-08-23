@@ -27,7 +27,8 @@ To replicate the analysis, follow these steps:
 2. **Install Required R Packages**: Install the necessary R packages. You can do this by opening R and running:
 
     ```bash
-    install.packages(c("tidyverse", "ggplot2", "leaflet", "dplyr", "corrr", "rmarkdown"))
+    install.packages(c("quanteda", "quanteda.textplots", "cowplot", "vader", "readxl", "tidyverse", "REdaS"))
+
 
 Alternatively, if a DESCRIPTION or renv.lock file is provided, use it to install the exact package versions used.
 
