@@ -1,4 +1,4 @@
-# NATO-Russo-Ukraine War Analysis
+# Public Sentiment Towards NATO in the Context of the Russo-Ukrainian War
 
 This repository contains a detailed geo-spatial sentiment analysis of the public perception of NATO during the NATO-Russo-Ukraine conflict in 2022. The analysis uses tweets in English from 27 European countries to explore how proximity to Russia influences sentiment towards NATO. The analysis was performed using R and is presented as a markdown file, offering a structured and reproducible format for the study.
 
