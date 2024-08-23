@@ -1,6 +1,7 @@
 # NATO-Russo-Ukraine War Analysis
 
-This repository contains a detailed analysis of the NATO-Russo-Ukraine conflict, focusing on key events, military actions, and geopolitical implications. The analysis was performed using R and is presented as a markdown file, providing an alternative to traditional Jupyter notebooks.
+This repository contains a detailed geo-spatial sentiment analysis of the public perception of NATO during the NATO-Russo-Ukraine conflict in 2022. The analysis uses tweets in English from 27 European countries to explore how proximity to Russia influences sentiment towards NATO. The analysis was performed using R and is presented as a markdown file, offering a structured and reproducible format for the study.
+
 
 ## Project Overview
 
@@ -8,12 +9,17 @@ The project aims to explore the dynamics of the conflict through data-driven ins
 
 ## Structure
 
-- **Analysis**: The core analysis is presented in markdown format [here](https://asaines.github.io/NATO_Russo_Ukriane_War/), generated using R. The analysis includes:
-  - Key events timeline
-  - Military actions and outcomes
-  - Geopolitical and economic impacts
-- **Data**: Raw and processed data used for the analysis is available in the `data` folder.
-- **Scripts**: R scripts for data processing and visualization are located in the `scripts` folder.
+- **Analysis**: The core analysis is conducted and presented in a single R Markdown file, which includes: 
+
+  - **Sentiment Analysis**: Evaluation of public sentiment towards NATO using 4870 tweets in English from 27 European countries collected on June 15, 2022.
+  - **Geospatial Visualization**: The use of heat maps and scatter plots to illustrate sentiment distribution across different regions of Europe.
+  - **Proximity Analysis**: Investigation into how geographical proximity to Russia affects the sentiment towards NATO.
+
+- **Scripts and Results**: The R Markdown file also contains the necessary scripts for data processing, sentiment analysis, and visualization. It includes all the code used to generate the results, providing a comprehensive view of the methodology and findings:
+
+## Full Analysis
+
+For a detailed view of the analysis, including interactive visualizations and the complete methodology, visit the [full analysis report](https://asaines.github.io/NATO_Russo_Ukriane_War/).
 
 ## Usage
 
