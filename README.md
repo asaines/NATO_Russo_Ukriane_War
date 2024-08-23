@@ -45,22 +45,25 @@ The analysis confirmed a significant finding: there is a negative relationship b
 
 ### Word Cloud
 
-![image](https://github.com/user-attachments/assets/9c56b6b3-4c87-4d08-bc0e-d668957860b3)
-
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/9c56b6b3-4c87-4d08-bc0e-d668957860b3" alt="Word Cloud">
+</div>
 
 The word cloud shows the most frequently mentioned terms in tweets related to the Russo-Ukrainian war and NATO, highlighting key topics of discussion.
 
 ### Geographical Sentiment Map
 
-![image](https://github.com/user-attachments/assets/37cbffbc-2d71-4cb6-9d3a-6e8222ed35c1)
-
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/37cbffbc-2d71-4cb6-9d3a-6e8222ed35c1" alt="Geographical Sentiment Map">
+</div>
 
 This map illustrates the percentage of positive words about NATO in tweets across different European countries. The results indicate that countries closer to Russia have a higher rate of positive sentiment towards NATO.
 
 ### Positive Score vs. Distance
 
-![image](https://github.com/user-attachments/assets/d2d5898d-9d76-4b9f-b93a-0b12538a2181)
-
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/d2d5898d-9d76-4b9f-b93a-0b12538a2181" alt="Positive Score vs. Distance">
+</div>
 
 The scatter plot displays the relationship between the distance from Russia and the positive sentiment score. It suggests that proximity to Russia may positively influence NATO's perception.
 
