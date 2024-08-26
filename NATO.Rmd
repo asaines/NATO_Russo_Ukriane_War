@@ -52,7 +52,7 @@ We applied the following techniques:
 *Step 1:* We collect  4870 tweets from 28 European countries by using a Twitter API, along with coordinates of European countries' capital by using the data-set "world-cities" [6]. They were collected on June 15, 2022. The collection of tweets was done in parts due to reaching the downloading rate allowed.
 
 ```{r}
-#Team members: Ramiro Antonio Maravilla Flores, r0865442 Alexander Saines Fajardo, r0731904
+#Authors:  Alexander Saines Fajardo, Ramiro Antonio Maravilla Flores
 library(quanteda)
 library(quanteda.textplots)
 library(cowplot)
