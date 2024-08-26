@@ -41,7 +41,7 @@ Alternatively, if a DESCRIPTION or renv.lock file is provided, use it to install
 3. **Render the R Markdown File**: Open the NATO_Russo_Ukriane_War.Rmd file in RStudio or another R environment and render it to produce the analysis.
 
     ```bash
-    rmarkdown::render("NATO_Russo_Ukriane_War.Rmd")
+    rmarkdown::render("NATO.Rmd")
 
 4. **View the Analysis**: Once rendered, open the generated HTML file in a web browser to view the analysis.
 
